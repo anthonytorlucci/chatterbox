@@ -15,7 +15,8 @@ def main():
     if args.chat:
         subprocess.run("uv run --env-file .env -- streamlit run st_chat.py", shell=True)
 
-    # coming soon -> research-context-summary
+    # coming soon -> main_ideas
+    # coming soon -> summary
     # coming soon -> researcher
 
 if __name__ == "__main__":

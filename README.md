@@ -8,4 +8,9 @@ While today's llm models are quite adept at solving most problems, I often would
 
 Chatterbox is a collection langgraph workflows (graphs) made up of components (nodes, conditional edges, and utilities). Each workflow has an associated frontend web application built with Streamlit.
 
-Early days still....
+Run the app to launch stremlit chat (requires an .env file with API KEYS)
+```zsh
+uv run --env-file .env -- python app.py --chat
+```
+
+# large language models
