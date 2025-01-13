@@ -7,6 +7,7 @@ def main():
 
     # Add chat argument
     parser.add_argument("--chat", action="store_true", help="Run basic chat application")
+    parser.add_argument("--summary", action="store_true", help="Run research context summary application")
 
     # Parse arguments
     args = parser.parse_args()
@@ -15,8 +16,9 @@ def main():
     if args.chat:
         subprocess.run("uv run --env-file .env -- streamlit run st_chat.py", shell=True)
 
-    # coming soon -> main_ideas
-    # coming soon -> summary
+    if args.summary:
+        subprocess.run("uv run --env-file .env -- streamlit run st_summary.py", shell=True)
+
     # coming soon -> researcher
 
 if __name__ == "__main__":

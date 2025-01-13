@@ -10,7 +10,16 @@ Chatterbox is a collection langgraph workflows (graphs) made up of components (n
 
 Run the app to launch stremlit chat (requires an .env file with API KEYS)
 ```zsh
-uv run --env-file .env -- python app.py --chat
+uv run python app.py --chat
 ```
 
-# large language models
+Or
+```zsh
+uv run --env-file .env -- python st_chat.py
+```
+
+## large language models
+
+
+## research notes to vector databases
+Collecting information from the web, arxiv, and pdf documents will ususally provide the context necessary to answer a question.
