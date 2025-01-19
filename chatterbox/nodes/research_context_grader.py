@@ -176,24 +176,28 @@ class ResearchContextGrader(ResearcherInterface):
                 return {
                     "calling_agent": PdfContextRetriever.NAME,
                     "pdf_context": filtered_docs,
+                    "requires_pdf_context": False,
                     "messages": state["messages"] + [AIMessage(content=ai_message)]
                 }
             case WebContextRetriever.NAME:  # "web_context_retriever"
                 return {
                     "calling_agent": WebContextRetriever.NAME,
                     "web_context": filtered_docs,
+                    "requires_web_context": False,
                     "messages": state["messages"] + [AIMessage(content=ai_message)]
                 }
             case ArxivContextRetriever.NAME:  # "arxiv_context_retriever"
                 return {
                     "calling_agent": ArxivContextRetriever.NAME,
                     "arxiv_context": filtered_docs,
+                    "requires_arxiv_context": False,
                     "messages": state["messages"] + [AIMessage(content=ai_message)]
                 }
             case VdbsContextRetriever.NAME:  # "vdbs_context_retriever"
                 return {
                     "calling_agent": VdbsContextRetriever.NAME,
                     "vdbs_context": filtered_docs,
+                    "requires_vdbs_context": False,
                     "messages": state["messages"] + [AIMessage(content=ai_message)]
                 }
             case _:

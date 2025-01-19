@@ -1,5 +1,5 @@
 import os
-from unittest.mock import patch
+# from unittest.mock import patch
 import pytest
 from langchain_core.documents import Document
 from langchain_core.messages import AIMessage
@@ -27,15 +27,6 @@ if not OPENAI_API_KEY:
 FIREWORKS_API_KEY = os.getenv("FIREWORKS_API_KEY")
 if not FIREWORKS_API_KEY:
     raise ValueError("FIREWORKS_API_KEY not found.")
-
-# Mock classes and functions
-# class MockLLM:
-#     def with_structured_output(self, output_class):
-#         self.output_class = output_class
-#         return self
-
-#     def invoke(self, inputs):
-#         return self.output_class(binary_score="yes")
 
 @pytest.fixture
 def mock_model_config():

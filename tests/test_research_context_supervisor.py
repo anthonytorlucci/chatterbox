@@ -12,20 +12,33 @@ def base_state():
         "pdf_context": [],
         "web_context": [],
         "arxiv_context": [],
-        "vdbs_context": []
+        "vdbs_context": [],
+        "requires_pdf_context": True,
+        "requires_web_context": True,
+        "requires_arxiv_context": True,
+        "requires_vdbs_context": True,
     }
 
 class TestResearchContextSupervisor:
 
     def test_initialization(self):
         """Test proper initialization of ResearchContextSupervisor."""
-        supervisor = ResearchContextSupervisor(has_pdf_paths=True, has_vector_dbs=True)
+        supervisor = ResearchContextSupervisor(
+            has_pdf_paths=True,
+            has_vector_dbs=True,
+            has_urls=True,
+            use_arxiv_search=True,
+        )
         assert supervisor._has_pdf_paths is True
         assert supervisor._has_vector_dbs is True
+        assert supervisor._has_urls is True
+        assert supervisor._use_arxiv_search is True
 
         supervisor = ResearchContextSupervisor()
         assert supervisor._has_pdf_paths is False
         assert supervisor._has_vector_dbs is False
+        assert supervisor._has_urls is False
+        assert supervisor._use_arxiv_search is False
 
     def test_supervisor_name(self):
         """Test if the supervisor has the correct NAME attribute."""
@@ -34,14 +47,19 @@ class TestResearchContextSupervisor:
 
     def test_empty_context_state(self, base_state):
         """Test supervisor behavior with empty context state, no pdf files, and no vector dbs."""
-        supervisor = ResearchContextSupervisor(has_pdf_paths=False, has_vector_dbs=False)
+        supervisor = ResearchContextSupervisor(
+            has_pdf_paths=False,
+            has_vector_dbs=False,
+            has_urls=False,
+            use_arxiv_search=False,
+        )
         result = supervisor(base_state)
 
         assert result["calling_agent"] == "research_context_supervisor"
         assert isinstance(result["messages"][-1], AIMessage)
         assert result.get("requires_pdf_context") == False
-        assert result.get("requires_web_context") == True
-        assert result.get("requires_arxiv_context") == True
+        assert result.get("requires_web_context") == False
+        assert result.get("requires_arxiv_context") == False
         assert result.get("requires_vdbs_context") == False
 
     def test_partial_context_state(self, base_state):
@@ -59,15 +77,20 @@ class TestResearchContextSupervisor:
             ),
         ]
 
-        supervisor = ResearchContextSupervisor(has_pdf_paths=True, has_vector_dbs=False)
+        supervisor = ResearchContextSupervisor(
+            has_pdf_paths=True,
+            has_vector_dbs=False,
+            has_urls=False,
+            use_arxiv_search=False
+        )
         result = supervisor(base_state)
 
         assert result["calling_agent"] == "research_context_supervisor"
         assert isinstance(result["messages"][-1], AIMessage)
-        assert result.get("requires_pdf_context") == False
-        assert result.get("requires_web_context") == False
-        assert result.get("requires_arxiv_context") == True
-        assert result.get("requires_vdbs_context") == False
+        assert result.get("requires_pdf_context") == False  # has_pdf_paths is True, however pdf_context is not empty
+        assert result.get("requires_web_context") == False  # has_urls is False
+        assert result.get("requires_arxiv_context") == False  # use_arxiv_search is False
+        assert result.get("requires_vdbs_context") == False  # has_vector_dbs is False
 
     def test_full_context_state(self, base_state):
         """Test supervisor behavior when all contexts are present."""

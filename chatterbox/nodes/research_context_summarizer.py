@@ -16,7 +16,7 @@ import logging
 #from pydantic import BaseModel, Field
 
 # langchain
-#---from langchain_core.messages.ai import AIMessage
+from langchain_core.messages.ai import AIMessage
 from langchain_core.prompts import (
     ChatPromptTemplate,
     PromptTemplate,
@@ -143,7 +143,7 @@ to summarize the retrieved documents:
         Returns:
             state (dict):
         """
-        logging.info("---FORMALIZE PROMPT---")
+        logging.info("---SUMMARIZE PROMPT---")
         all_context = state.get("pdf_context", [])
         all_context.extend(state.get("web_context", []))
         all_context.extend(state.get("arxiv_context", []))
@@ -164,4 +164,10 @@ to summarize the retrieved documents:
                 "messages": state["messages"] + [result]
             }
         else:
-            raise ValueError("All context lists are empty or research prompt is empty.")
+            #--raise ValueError("All context lists are empty or research prompt is empty.")
+            message = AIMessage(content="All context lists are empty or research prompt is empty. Try increasing the number of main ideas or adding additional sources for research.")
+            return {
+                "calling_agent": self.NAME,
+                "summarized_context": message.content,
+                "messages": state["messages"] + [message]
+            }

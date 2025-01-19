@@ -130,36 +130,10 @@ class TestResearchContextSummarizer:
         assert isinstance(result["summarized_context"], str)
         assert len(result["summarized_context"]) > 0
 
-
-    def test_summarize_with_empty_contexts(self, summarizer):
-        """Ensure that a `ValueError` is raised when all context lists are empty."""
-        state = {
-            "research_prompt": "Summarize research on AI.",
-            "pdf_context": [],
-            "web_context": [],
-            "arxiv_context": [],
-            "vdbs_context": [],
-            "messages": []
-        }
-        with pytest.raises(ValueError, match="All context lists are empty or research prompt is empty."):
-            summarizer(state)
-
-    def test_summarize_with_empty_research_prompt(self, summarizer):
-        """Ensure that a `ValueError` is raised when the research prompt is empty."""
-        state = {
-            "pdf_context": [MagicMock(page_content="Document 1 content")],
-            "web_context": [],
-            "arxiv_context": [],
-            "vdbs_context": [],
-            "messages": []
-        }
-        with pytest.raises(ValueError, match="All context lists are empty or research prompt is empty."):
-            summarizer(state)
-
-    def test_logging_during_summarization(self, summarizer_gpt4o_mini, ai_research_state, caplog):
+    def test_logging_during_summarization(self, summarizer, ai_research_state, caplog):
         """Verify that logging occurs as expected during the summarization process."""
         with caplog.at_level(logging.INFO):
-            summarizer_gpt4o_mini(ai_research_state)
-            assert "FORMALIZE PROMPT" in caplog.text
+            summarizer(ai_research_state)
+            assert "SUMMARIZE PROMPT" in caplog.text
 
 # ---

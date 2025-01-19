@@ -8,7 +8,7 @@ import logging
 
 def route_to_context_retriever_or_summarize(state):
     """
-    Determines whether to formalize the research prompt or route to a context retriever.
+    Determines whether to route to a context retriever or summarize the research context.
 
     Args:
         state (dict): The current graph state
@@ -29,5 +29,5 @@ def route_to_context_retriever_or_summarize(state):
         logging.info("---DECISION: REQUIRES ARXIV CONTEXT---")
         return "arxiv" # -> ArxivContextRetriever
     else:
-        logging.info("---DECISION: PROMOTE TO FORMALIZE PROMPT---")
+        logging.info("---DECISION: PROMOTE TO SUMMARIZE PROMPT---")
         return "summarize" # -> ResearchContextSummarizer

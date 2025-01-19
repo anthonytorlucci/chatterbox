@@ -9,7 +9,7 @@ from uuid import uuid4
 import logging
 
 # third party
-# from pydantic import BaseModel, Field
+import chromadb
 
 # langchain
 from langchain_core.messages.ai import AIMessage
@@ -87,6 +87,7 @@ class ArxivContextRetriever(ResearcherInterface):
         # TODO: add to parameters
         self._embeddings = OllamaEmbeddings(model="llama3.2")
 
+        chromadb.api.client.SharedSystemClient.clear_system_cache()
         self._vector_store = Chroma(
             collection_name="arxiv_context_retriever_collection",
             embedding_function=self._embeddings,

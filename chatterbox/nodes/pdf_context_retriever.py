@@ -11,7 +11,7 @@ from typing import List
 import logging
 
 # third party
-# from pydantic import BaseModel, Field
+import chromadb
 
 # langchain
 from langchain_core.messages.ai import AIMessage
@@ -87,6 +87,15 @@ class PdfContextRetriever(ResearcherInterface):
         """
         # TODO: assert each item in pdf_paths is a Path object or can be converted to a Path object
         self._vector_store_is_valid = False
+        self._k_results = k_results
+        self._embeddings = OllamaEmbeddings(model="llama3.2")
+
+        chromadb.api.client.SharedSystemClient.clear_system_cache()
+        self._vector_store = Chroma(
+            collection_name="pdf_context_retriever_collection",
+            embedding_function=self._embeddings,
+            # persist_directory="./chroma_langchain_db",  # Where to save data locally, remove if not necessary
+        )
 
         documents = []
         for i,pdf_path in enumerate(pdf_paths):
@@ -96,14 +105,6 @@ class PdfContextRetriever(ResearcherInterface):
 
         # if documents is empty, there is nothing to store and the node cannot be called
         if documents:
-            # TODO: add to parameters
-            self._embeddings = OllamaEmbeddings(model="llama3.2")
-
-            self._vector_store = Chroma(
-                collection_name="pdf_context_retriever_collection",
-                embedding_function=self._embeddings,
-                # persist_directory="./chroma_langchain_db",  # Where to save data locally, remove if not necessary
-            )
 
             text_splitter = RecursiveCharacterTextSplitter(
                 chunk_size=chunk_size,
@@ -114,8 +115,6 @@ class PdfContextRetriever(ResearcherInterface):
             uuids = [str(uuid4()) for _ in range(len(all_splits))]
             if k_results > len(all_splits):
                 self._k_results = len(all_splits)
-            else:
-                self._k_results = k_results
 
             self._vector_store.add_documents(documents=all_splits, ids=uuids)
             self._vector_store_is_valid = True

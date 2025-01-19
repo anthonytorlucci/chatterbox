@@ -63,6 +63,7 @@ class ResearchAgentState(TypedDict):
     # Default is to replace. add_messages says "append"
     messages: Annotated[Sequence[BaseMessage], add_messages]
     github_context: List[Document]  # <- context from user_input_github_urls + any GitHub urls obtained in a web search
+    use_web_search: bool  # <-- indicator to use web search in the WebContextRetriever
     web_context: List[Document]  # <- context from web context retriever
     pdf_context: List[Document]  # <- context obtained from pdf context retriever
     arxiv_context: List[Document]  # <- context obtained from the arxiv context retriever

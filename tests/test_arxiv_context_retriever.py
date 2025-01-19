@@ -85,24 +85,6 @@ class TestArxivContextRetriever:
         assert isinstance(result["messages"][-1], AIMessage)
         assert result["messages"][-1].content == "NO ARXIV CONTEXT RETRIEVED"
 
-    # def test_vector_store_integration(self, arxiv_retriever, mock_documents):
-    #     """Test the integration with the vector store."""
-    #     # Note: This is more of an integration test and might need to be adjusted
-    #     # based on your testing environment
-    #     test_state = {
-    #         "main_ideas": ["machine learning"],
-    #         "messages": []
-    #     }
-
-    #     with patch('chatterbox.nodes.arxiv_context_retriever.ArxivLoader') as mock_loader:
-    #         mock_loader_instance = Mock()
-    #         mock_loader.return_value = mock_loader_instance
-    #         mock_loader_instance.lazy_load.return_value = mock_documents
-
-    #         result = arxiv_retriever(test_state)
-
-    #         assert len(result["arxiv_context"]) <= arxiv_retriever._k_results
-
     def test_error_handling(self, arxiv_retriever):
         """Test error handling in the retriever."""
         test_state = {

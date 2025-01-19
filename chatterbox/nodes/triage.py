@@ -275,7 +275,11 @@ Generate a list of the main ideas and key concepts from the prompt:
                 "main_ideas": main_ideas,
                 "research_prompt": research_prompt,
                 "messages": state["messages"] + [AIMessage(content=ai_message)],
+                "requires_pdf_context": True,  # default state is True; manages by supervisor and context grader
+                "requires_vdbs_context": True,  # default state is True; manages by supervisor and context grader
+                "requires_web_context": True,  # default state is True; manages by supervisor and context grader
+                "requires_arxiv_context": True,  # default state is True; manages by supervisor and context grader
                 "recursion_limit": 30
             }
         else:
-            raise ValueError("No data found in the state initial_prompt.")
+            raise ValueError("No messages found.")

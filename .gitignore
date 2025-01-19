@@ -166,3 +166,6 @@ cython_debug/
 
 # personal
 notes.md
+vdbs_documents/chroma_research_notes_ollama_emb_db
+*.DS_Store
+*.tex

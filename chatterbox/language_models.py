@@ -95,7 +95,7 @@ class LargeLanguageModelsEnum(LargeLanguageModelsEnumInterface):
         - OpenAI: O1 series, GPT-4O series
         - Anthropic: Claude 3 and 3.5 series
         - Fireworks: Llama 3.x series, Mixtral, Zephyr, Qwen
-        - Ollama: QwQ, Llama, Marco
+        - Ollama: Llama, Marco, Falcon
 
     Example:
         model_info = LargeLanguageModelsEnum.OPENAI_O1_PREVIEW
@@ -156,17 +156,6 @@ class LargeLanguageModelsEnum(LargeLanguageModelsEnumInterface):
         """,
         has_tools=True,
         urls=["https://ollama.com/library/granite3.1-dense"]
-    )
-    OLLAMA_LLAMA_GAURD3_8B = LargeLanguageModelsAPIInfo(
-        company="Ollama",
-        generic_name="ollama llama-guard3",
-        api_reference="llama-guard3",
-        description="""
-            Llama Guard 3 is a series of models fine-tuned for content safety
-            classification of LLM inputs and responses.
-        """,
-        has_tools=False,
-        urls=[""]
     )
     OLLAMA_PHI4_14B = LargeLanguageModelsAPIInfo(
         company="Ollama",
