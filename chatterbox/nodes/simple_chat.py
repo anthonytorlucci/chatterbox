@@ -17,7 +17,6 @@ from langchain_core.prompts import (
     #MessagesPlaceholder
 )
 from langchain_community.tools import TavilySearchResults
-# from langchain_core.runnables import Runnable
 
 # langgraph
 
@@ -62,24 +61,11 @@ class SimpleChat(ResearcherInterface):
         - The chat uses a basic system prompt that identifies itself as a helpful assistant
     """
     NAME = "simple_chat"
-    def __init__(self, model_config: LargeLanguageModelConfig, use_search=False):
-        self._use_search = use_search
-        if self._use_search:
-            search_tool = TavilySearchResults(
-                max_results=5,
-                search_depth="advanced",
-                include_answer=True,
-                include_raw_content=True,
-                include_images=False,
-                # include_domains=[...],
-                # exclude_domains=[...],
-                # name="...",            # overwrite default tool name
-                # description="...",     # overwrite default tool description
-                # args_schema=...,       # overwrite default args_schema: BaseModel
-            )
-            llm_chat = get_llm_model(model_config=model_config).bind_tools(tools=[search_tool])
-        else:
-            llm_chat = get_llm_model(model_config=model_config)
+    def __init__(
+        self,
+        model_config: LargeLanguageModelConfig,
+    ):
+        llm_chat = get_llm_model(model_config=model_config)
 
         # Prompt
         sys_prompt=PromptTemplate(
@@ -121,7 +107,10 @@ class SimpleChat(ResearcherInterface):
                 input={
                     "input_prompt": message,
                 },
-                #config=rconfig???
+                #config=self._runnable_config
+                # config=RunnableConfig(
+                #     configurable={"thread_id": "0"}
+                # )
             )
             return {"messages": [response]}
         else:

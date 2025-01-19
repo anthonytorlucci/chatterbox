@@ -13,6 +13,8 @@ from typing import (
 )
 from enum import Enum
 import logging
+from datetime import datetime
+from uuid import uuid4
 
 # third party
 import streamlit as st
@@ -22,8 +24,10 @@ from pydantic import (
 
 # langchain
 from langchain_core.messages import HumanMessage, AIMessage
+#--from langchain_core.runnables.config import RunnableConfig
 
 # langgraph
+from langgraph.checkpoint.memory import MemorySaver
 
 # local
 from chatterbox.language_models import LargeLanguageModelConfig, LargeLanguageModelsEnum
@@ -49,12 +53,16 @@ if not TAVILY_API_KEY:
 USER_AGENT = os.getenv("USER_AGENT")
 
 # ---- global variables ----
+#--- Get the current date and time
+#---now = datetime.now()
+# Format the date and time as a string
+current_time_string = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 # Configure logging
 logging.basicConfig(
-    #filename="Path(__file__).parent.joinpath("logs", "chat.log",  # Log to a file
-    level=logging.INFO,     # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    filename=Path(__file__).parent.joinpath("logs", f"{current_time_string}.log"),  # Log to a file
+    level=logging.DEBUG,     # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
     format="%(asctime)s - %(levelname)s - %(message)s", # Customize the log message format
-    #filemode="w" # Overwrite log file on each run. Use 'a' to append.
+    filemode="w" # Overwrite log file on each run. Use 'a' to append.
 )
 
 LLM_MODELS = [llm for llm in LargeLanguageModelsEnum]
@@ -67,6 +75,12 @@ if "simple_chat_node" not in st.session_state:
     st.session_state["simple_chat_node"] = None
 if "workflow" not in st.session_state:
     st.session_state["workflow"] = None
+# if "runnable_config" not in st.session_state:
+#     st.session_state["runnable_config"] = RunnableConfig(
+#         configurable={
+#             "thread_id": "0", #str(uuid4()),
+#         }
+#     )
 
 # ---- callbacks ----
 def update_chat_workflow():
@@ -74,7 +88,6 @@ def update_chat_workflow():
     llm_enum = [mdl for mdl in LargeLanguageModelsEnum if mdl.generic_name == st.session_state["chat_agent_llm_name"]][0]
     logging.info(f""".... update_chat_workflow called.\n""")
     logging.info(f""".... language model: {llm_enum}""")
-    logging.info(f""".... use search tool: {st.session_state["chat_agent_use_search"]}""")
     match llm_enum.company:
         case "OpenAI":
             llm_api_key = OPENAI_API_KEY
@@ -85,6 +98,7 @@ def update_chat_workflow():
         case _:
             llm_api_key = ""
 
+    #---print(f"\n\n !!! Runnable config: {st.session_state["runnable_config"]} !!! \n\n")
     st.session_state["simple_chat_node"] = SimpleChat(
         model_config=LargeLanguageModelConfig(
             id=llm_enum,
@@ -92,11 +106,11 @@ def update_chat_workflow():
             temperature=st.session_state["chat_agent_temperature"],
             max_tokens=st.session_state["chat_agent_max_tokens"]
         ),
-        use_search=st.session_state["chat_agent_use_search"]
     )
     st.session_state["workflow"] = build_simple_chat_graph(
         simple_chat_node=st.session_state["simple_chat_node"]
     )
+
 
 
 # ---- button box ----
@@ -129,35 +143,23 @@ with st.sidebar:
             key="chat_agent_max_tokens",
             on_change=update_chat_workflow
         )
-        use_search = st.checkbox(
-            label="use search tool",
-            value=False,
-            key="chat_agent_use_search",
-            on_change=update_chat_workflow
-        )
 
     st.divider()
-    # TODO: convert session_state.messages to markdown; open a file dialog to save the markdown file
-    st.button(
-        label="Export Markdown",
-        key="export_markdown_button",
-        # TODO: on_click=None,
-        disabled=False,
-        use_container_width=False,
-    )
+
 
 # Initialize the chat node and workflow if they haven't been created yet
 if st.session_state["simple_chat_node"] is None:
     update_chat_workflow()
 
-graph = st.session_state["workflow"].compile()
+#--memory = MemorySaver()
+graph = st.session_state["workflow"].compile()  # checkpointer=memory
 
 # Initialize chat history
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state["messages"] = []
 
 # Display chat messages from history on app rerun
-for message in st.session_state.messages:
+for message in st.session_state["messages"]:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
