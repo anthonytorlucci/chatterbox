@@ -167,6 +167,16 @@ class LargeLanguageModelsEnum(LargeLanguageModelsEnumInterface):
         has_tools=False,
         urls=["https://ollama.com/library/phi4"]
     )
+    OLLAMA_DEEPSEEK_R1_32B = LargeLanguageModelsAPIInfo(
+        company="Ollama",
+        generic_name="ollama deepseek-r1 32b",
+        api_reference="deepseek-r1:32b",
+        description="""
+        DeepSeek's first generation reasoning models with comparable performance to OpenAI-o1.
+        """,
+        has_tools=False,
+        urls=["https://ollama.com/library/deepseek-r1:32b"]
+    )
     # OLLAMA_ = LargeLanguageModelsAPIInfo(
     #     company="Ollama",
     #     generic_name="",
@@ -176,7 +186,6 @@ class LargeLanguageModelsEnum(LargeLanguageModelsEnumInterface):
     #     has_tools=False,
     #     urls=[""]
     # )
-    # TODO: additional ollama llm models
     OPENAI_GPT_4O = LargeLanguageModelsAPIInfo(
         company="OpenAI",
         generic_name="openai gpt-4o",

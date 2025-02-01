@@ -35,6 +35,42 @@ from chatterbox.nodes.web_context_retriever import WebContextRetriever
 from chatterbox.nodes.arxiv_context_retriever import ArxivContextRetriever
 from chatterbox.nodes.vdbs_context_retriever import VdbsContextRetriever
 
+SYSTEM_PROMPT = """
+Objective:
+Your task is to evaluate whether a retrieved document is relevant to a user's question. This involves assessing
+both explicit keywords and the underlying semantic meaning of the content.
+
+Criteria for Relevance:
+1. **Keyword Match**: Check if the document contains words or phrases directly related to the user's query.
+2. **Semantic Meaning**: Analyze if the document's main ideas, themes, or concepts align with the question, even
+if exact keywords are absent.
+3. **Contextual Understanding**: Consider the broader context of the document to determine its relevance beyond
+surface-level terms.
+
+Assessment Process:
+- Begin by identifying key elements in the user's query.
+- Examine the document for factual data, conceptual insights, or any information that directly or indirectly
+addresses the query.
+- Evaluate both explicit content and implied meanings to capture nuanced relevance.
+
+Scoring:
+Assign a binary score of 'yes' or 'no' based on your assessment. A 'yes' indicates relevance, while 'no'
+suggests the document does not meaningfully contribute to answering the query. It does not need to be a stringent
+test. The goal is to filter out erroneous retrievals.
+"""
+
+USER_PROMPT = """
+Given the retrieved document:
+
+\"""{document}\"""
+
+and the research prompt:
+
+\"""{research_prompt}\"""
+
+grade the relevance of the document to the prompt.
+"""
+
 ### Data model
 class GradeDocuments(BaseModel):
     """Binary score for relevance check on retrieved documents."""
@@ -57,7 +93,7 @@ class ResearchContextGrader(ResearcherInterface):
 
     Attributes:
         NAME (str): Identifier for the agent ("research_context_grader")
-        pdf_context_grader: A chain combining a chat prompt template with a structured LLM output
+        context_grader: A chain combining a chat prompt template with a structured LLM output
 
     Parameters:
         model_config (LargeLanguageModelConfig): Configuration for the language model used for grading
@@ -91,29 +127,22 @@ class ResearchContextGrader(ResearcherInterface):
                 This includes model name, parameters, and other relevant settings.
 
         Attributes:
-            pdf_context_grader: A chain combining the chat prompt template with the
-                structured language model output. Despite the name, this grader
-                handles documents from all retriever types (PDF, Web, Arxiv, VDBs).
+            context_grader: A chain combining the chat prompt template with the
+                structured language model output. This grader handles documents from all
+                retriever types (PDF, Web, Arxiv, VDBs).
         """
         llm_grader = get_llm_model(model_config=model_config).with_structured_output(GradeDocuments)
 
         # Prompt
         sys_prompt=PromptTemplate(
             input_variables=[],
-            template="""You are a grader assessing relevance of a retrieved
-            document to a user question. It does not need to be a stringent
-            test. The goal is to filter out erroneous retrievals. If the
-            document contains keyword(s) or semantic meaning related to the
-            user question, grade it as relevant. Give a binary score 'yes' or
-            'no' score to indicate whether the document is relevant to the
-            question.
-            """
+            template=SYSTEM_PROMPT
         )
         system_message_prompt = SystemMessagePromptTemplate(prompt=sys_prompt)
 
         human_prompt: PromptTemplate = PromptTemplate(
             input_variables=["document", "research_prompt"],
-            template="""Given the retrieved document: \n\n {document} \n\n and the research prompt: {research_prompt}, grade the relevance of the document to the prompt."""
+            template=USER_PROMPT
         )
         human_message_prompt = HumanMessagePromptTemplate(prompt=human_prompt)
 
@@ -121,7 +150,7 @@ class ResearchContextGrader(ResearcherInterface):
             [system_message_prompt, human_message_prompt])
 
 
-        self.pdf_context_grader = agent_prompt | llm_grader
+        self.context_grader = agent_prompt | llm_grader
 
 
     def __call__(self, state: dict):
@@ -154,7 +183,7 @@ class ResearchContextGrader(ResearcherInterface):
             # Score each doc
             filtered_docs = []
             for d in documents:
-                score = self.pdf_context_grader.invoke(
+                score = self.context_grader.invoke(
                     {
                         "document": d.page_content,
                         "research_prompt": research_prompt
