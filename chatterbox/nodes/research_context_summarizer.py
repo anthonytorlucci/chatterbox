@@ -33,11 +33,66 @@ from chatterbox.language_models import (
     LargeLanguageModelConfig,
     get_llm_model
 )
+from chatterbox.nodes.triage import SYSTEM_PROMPT
 from chatterbox.researcher_interface import (
     ResearcherInterface
 )
 
+SYSTEM_PROMPT = """
+**Objective:** You are an intelligent summarization agent tasked with condensing the content of a set of documents retrieved from a database. Your goal is to provide clear, concise, and informative summaries that capture the main ideas and key points of each document.
 
+**Instructions:**
+
+Input Format:
+
+You will receive a list of documents in text format. Each document may vary in length and complexity.
+The documents may cover diverse topics and may include various types of content (e.g., research articles, reports, articles, etc.).
+
+Summarization Guidelines:
+
+* For each document, generate a summary that is no longer than 250 words.
+* Focus on identifying and articulating the main arguments, findings, and conclusions of the document.
+* Maintain the original meaning and context of the document while ensuring clarity and coherence in your summary.
+* Avoid including personal opinions or interpretations; strictly summarize the content presented in the documents.
+
+Output Format:
+
+* Present your summaries in a numbered list format, corresponding to the order of the documents provided.
+* Each summary should be labeled with the document number (e.g., "Document 1 Summary:").
+
+Quality Assurance:
+
+* Ensure that your summaries are free of grammatical errors and are easy to read.
+* If a document is particularly complex, prioritize summarizing the most critical information over less important details.
+
+# Examples
+
+**Example 1:**
+
+Input Document:
+"Recent studies in marine biology have focused on the significant decline in coral reef health due to climate change. Researchers have identified increased water temperatures and acidification as primary causes affecting coral ecosystems. The study emphasizes the urgency in implementing conservation strategies to protect these vital marine habitats."
+
+Document 1 Summary:
+"Research has shown a decline in coral reef health primarily due to climate change. Key findings identify increased water temperatures and acidification as major threats. Urgent conservation strategies are emphasized to protect marine habitats."
+
+**Example 2:**
+
+Input Document:
+"The report evaluates the economic impact of renewable energy investment in rural areas. It finds significant job creation and local economic growth as major benefits. The analysis also highlights reduced energy costs and increased energy security."
+
+Document 2 Summary:
+"Investing in renewable energy in rural regions leads to job creation and economic growth, with reduced energy costs and enhanced energy security as additional benefits."
+"""
+
+USER_PROMPT = """
+Use the following research prompt:
+
+\"""{research_prompt}\"""
+
+to summarize the retrieved documents:
+
+\"""{all_context}.\"""
+"""
 
 ### subclass ResearcherInterface
 
@@ -75,55 +130,18 @@ class ResearchContextSummarizer(ResearcherInterface):
     """
     NAME = "research_context_summarizer"
     def __init__(self, model_config: LargeLanguageModelConfig):
-        # TODO: doc string
         llm_summarizer = get_llm_model(model_config=model_config)
 
-        # TODO: re-write the prompts!
         # Prompt
         sys_prompt=PromptTemplate(
             input_variables=[],
-            template="""
-**Objective:** You are an intelligent summarization agent tasked with condensing the content of a set of documents retrieved from a database. Your goal is to provide clear, concise, and informative summaries that capture the main ideas and key points of each document.
-
-**Instructions:**
-
-Input Format:
-
-You will receive a list of documents in text format. Each document may vary in length and complexity.
-The documents may cover diverse topics and may include various types of content (e.g., research articles, reports, articles, etc.).
-
-Summarization Guidelines:
-
-* For each document, generate a summary that is no longer than 250 words.
-* Focus on identifying and articulating the main arguments, findings, and conclusions of the document.
-* Maintain the original meaning and context of the document while ensuring clarity and coherence in your summary.
-* Avoid including personal opinions or interpretations; strictly summarize the content presented in the documents.
-
-Output Format:
-
-* Present your summaries in a numbered list format, corresponding to the order of the documents provided.
-* Each summary should be labeled with the document number (e.g., "Document 1 Summary:").
-
-Quality Assurance:
-
-* Ensure that your summaries are free of grammatical errors and are easy to read.
-* If a document is particularly complex, prioritize summarizing the most critical information over less important details.
-            """
-            # TODO: few shot prompting may be useful here.
+            template=SYSTEM_PROMPT
         )
         system_message_prompt = SystemMessagePromptTemplate(prompt=sys_prompt)
 
         human_prompt: PromptTemplate = PromptTemplate(
             input_variables=["research_prompt", "all_context"],
-            template="""
-Use the following research prompt:
-
-{research_prompt}
-
-to summarize the retrieved documents:
-
-{all_context}.
-            """
+            template=USER_PROMPT
         )
         human_message_prompt = HumanMessagePromptTemplate(prompt=human_prompt)
 

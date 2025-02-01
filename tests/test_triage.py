@@ -100,7 +100,7 @@ class TestTriage:
                 max_tokens=1024,
             )
         )
-        with pytest.raises(ValueError, match="No data found in the state initial_prompt."):
+        with pytest.raises(ValueError, match="No messages found."):
             triage({})
 
     def test_triage_empty_messages(self):
@@ -113,7 +113,7 @@ class TestTriage:
                 max_tokens=1024,
             )
         )
-        with pytest.raises(ValueError, match="No data found in the state initial_prompt."):
+        with pytest.raises(ValueError, match="No messages found."):
             triage({"messages": []})
 
     def test_triage_respects_max_ideas(self, model_config_openai_gpt4o_mini):

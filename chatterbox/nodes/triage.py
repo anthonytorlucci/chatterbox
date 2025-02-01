@@ -32,6 +32,85 @@ from chatterbox.researcher_interface import (
     ResearcherInterface
 )
 
+SYSTEM_PROMPT = """
+Your primary objective is to serve as a triage agent in our multi-agent
+research system. Your role is crucial in accurately extracting main ideas from
+the input text and initializing the graph state for subsequent agents. This
+task involves understanding the core concepts and key points of the given
+research prompt or question.
+
+To initiate this process, please format your response using a structured list
+format. Each item in the list should represent a significant idea or concept
+identified from the input. Use lower case characters unless the word is a
+proper noun.
+
+Remember, precision and comprehensiveness are vital at this stage as your
+extraction will guide all subsequent agents' actions and information retrieval
+processes. Your understanding should go beyond mere keywords; it should
+encapsulate the essence or core themes of the input text.
+
+To achieve this, you may employ techniques such as semantic analysis or topic
+modeling to identify the most significant elements within the provided
+research prompt or question. However, your primary tool for this task is a
+large language model which you will use to analyze and interpret the input
+text.
+
+Finally, after extracting these main ideas, prepare to initialize the graph
+state with these key concepts. This initialization sets the foundation for all
+subsequent processing by other agents in our system.
+
+Please begin by defining your extraction objective clearly before proceeding
+with the analysis.
+
+# Examples
+
+1. **Input Prompt**: "What is machine learning?"
+- **Extracted Main Ideas**:
+- artificial intelligence
+- machine learning
+- statistics
+- pattern recognition
+
+2. **Input Prompt**: "Explain the impact of climate change on global agriculture."
+- **Extracted Main Ideas**:
+- climate change
+- global agriculture
+- environmental impact
+- food security
+
+3. **Input Prompt**: "Discuss the applications of blockchain technology in finance."
+- **Extracted Main Ideas**:
+- blockchain technology
+- finance
+- cryptocurrency
+- transaction security
+
+4. **Input Prompt**: "What are some wavelet methods for time series analysis and signal processing?"
+- **Extracted Main Ideas**:
+- wavelet transform
+- multiresolution analysis
+- Daubechies wavelets
+- signal processing
+- fast Fourier transform
+- time-frequency localization
+
+# Output Format
+
+- Structured list format with each item representing a key concept or main idea from the input text.
+
+# Notes
+
+- Ensure the identification goes beyond keywords to capture the core themes.
+- Use semantic analysis or topic modeling if necessary, but prioritize using the large language model for analysis.
+- Examples should guide your understanding and approach, applying similar logic and extraction methods to new inputs.
+"""
+
+USER_PROMPT = """
+Generate a list of {num_main_ideas} main ideas and key concepts from the prompt:
+
+{research_prompt}.
+"""
+
 class MainIdeas(BaseModel):
     """Main ideas, keywords, or key concepts from the prompt."""
 
@@ -168,46 +247,13 @@ class Triage(ResearcherInterface):
         # Prompt
         sys_prompt = PromptTemplate(
             input_variables=[],
-            template="""
-Your primary objective is to serve as a triage agent in our multi-agent
-research system. Your role is crucial in accurately extracting main ideas from
-the input text and initializing the graph state for subsequent agents. This
-task involves understanding the core concepts and key points of the given
-research prompt or question.
-
-To initiate this process, please format your response using a structured list
-format. Each item in the list should represent a significant idea or concept
-identified from the input. Ensure that you limit the output to five main
-ideas, unless otherwise specified by the attribute max_num_main_ideas.
-
-Remember, precision and comprehensiveness are vital at this stage as your
-extraction will guide all subsequent agents' actions and information retrieval
-processes. Your understanding should go beyond mere keywords; it should
-encapsulate the essence or core themes of the input text.
-
-To achieve this, you may employ techniques such as semantic analysis or topic
-modeling to identify the most significant elements within the provided
-research prompt or question. However, your primary tool for this task is a
-large language model which you will use to analyze and interpret the input
-text.
-
-Finally, after extracting these main ideas, prepare to initialize the graph
-state with these key concepts. This initialization sets the foundation for all
-subsequent processing by other agents in our system.
-
-Please begin by defining your extraction objective clearly before proceeding
-with the analysis.
-            """
+            template=SYSTEM_PROMPT
         )
         system_message_prompt = SystemMessagePromptTemplate(prompt=sys_prompt)
 
         human_prompt: PromptTemplate = PromptTemplate(
-            input_variables=["research_prompt"],
-            template="""
-Generate a list of the main ideas and key concepts from the prompt:
-
-{research_prompt}.
-            """
+            input_variables=["research_prompt", "num_main_ideas"],
+            template=USER_PROMPT
         )
         human_message_prompt = HumanMessagePromptTemplate(prompt=human_prompt)
 
@@ -264,7 +310,8 @@ Generate a list of the main ideas and key concepts from the prompt:
             research_prompt = messages[-1].content
             ideas = self.main_ideas_extractor.invoke(
                 input={
-                    "research_prompt": research_prompt
+                    "research_prompt": research_prompt,
+                    "num_main_ideas": self._max_num_main_ideas
                 },
                 #config=rconfig???
             )
