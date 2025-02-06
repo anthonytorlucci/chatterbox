@@ -266,34 +266,6 @@ class LargeLanguageModelsEnum(LargeLanguageModelsEnumInterface):
         has_tools=True,
         urls=["https://fireworks.ai/models/fireworks/llama-v3p1-70b-instruct"]
     )
-    FIREWORKS_LLAMA_31_8B_INSTRUCT = LargeLanguageModelsAPIInfo(
-        company="Fireworks",
-        generic_name="fireworks llama 3.1 8B instruct",
-        api_reference="accounts/fireworks/models/llama-v3p1-8b-instruct",
-        description="""
-            The Meta Llama 3.1 collection of multilingual large language
-            models (LLMs) is a collection of pretrained and instruction tuned
-            generative models in 8B, 70B and 405B sizes. The Llama 3.1
-            instruction tuned text only models (8B, 70B, 405B) are optimized
-            for multilingual dialogue use cases and outperform many of the
-            available open source and closed chat models on common industry
-            benchmarks.""",
-        has_tools=True,
-        urls=["https://fireworks.ai/models/fireworks/llama-v3p1-8b-instruct"]
-    )
-    FIREWORKS_LLAMA_32_3B_INSTRUCT = LargeLanguageModelsAPIInfo(
-        company="Fireworks",
-        generic_name="fireworks llama 3.2 3B instruct",
-        api_reference="accounts/fireworks/models/llama-v3p2-3b-instruct",
-        description="""
-            Llama 3.2 3B instruct is a lightweight, multilingual model from
-            Meta. The model is designed for efficiency and offers substantial
-            latency and cost improvements compared to larger models. Example
-            use cases for the model include query and prompt rewriting and
-            writing assistance""",
-        has_tools=True,
-        urls=["https://fireworks.ai/models/fireworks/llama-v3p2-3b-instruct"]
-    )
     FIREWORKS_LLAMA_33_70B_INSTRUCT = LargeLanguageModelsAPIInfo(
         company="Fireworks",
         generic_name="fireworks llama 3.3 70B instruct",
@@ -318,19 +290,6 @@ class LargeLanguageModelsEnum(LargeLanguageModelsEnumInterface):
             enabled.""",
         has_tools=True,
         urls=["https://fireworks.ai/models/fireworks/mixtral-8x22b-instruct"]
-    )
-    FIREWORKS_ZEPHYR_7B_BETA = LargeLanguageModelsAPIInfo(
-        company="Fireworks",
-        generic_name="fireworks zephyr 7B beta",
-        api_reference="accounts/fireworks/models/zephyr-7b-beta",
-        description="""
-            Zephyr is a series of language models that are trained to act as
-            helpful assistants. Zephyr-7B-β is the second model in the series,
-            and is a fine-tuned version of mistralai/Mistral-7B-v0.1 that was
-            trained on on a mix of publicly available, synthetic datasets using
-            Direct Preference Optimization (DPO).""",
-        has_tools=True,
-        urls=["https://fireworks.ai/models/fireworks/zephyr-7b-beta"]
     )
     FIREWORKS_QWEN_QWQ_32B_PREVIEW = LargeLanguageModelsAPIInfo(
         company="Fireworks",
@@ -362,12 +321,36 @@ class LargeLanguageModelsEnum(LargeLanguageModelsEnumInterface):
         has_tools=False,  # ?
         urls=["https://fireworks.ai/models/fireworks/qwen2p5-coder-32b-instruct"]
     )
+    FIREWORKS_DEEPSEEK_R1 = LargeLanguageModelsAPIInfo(
+        company="Fireworks",
+        generic_name="fireworks deepseek r1",
+        api_reference="accounts/fireworks/models/deepseek-r1",
+        description="""
+        DeepSeek-R1 is a state-of-the-art large language model optimized with
+        reinforcement learning and cold-start data for exceptional reasoning,
+        math, and code performance.
+        """,
+        has_tools=False,
+        urls=["https://fireworks.ai/models/fireworks/deepseek-r1"]
+    )
+    FIREWORKS_ = LargeLanguageModelsAPIInfo(
+        company="Fireworks",
+        generic_name="fireworks deepseek v3",
+        api_reference="accounts/fireworks/models/deepseek-v3",
+        description="""
+        A a strong Mixture-of-Experts (MoE) language model with 671B total
+        parameters with 37B activated for each token from Deepseek.
+        """,
+        has_tools=False,
+        urls=["https://fireworks.ai/models/fireworks/deepseek-v3"]
+    )
     # FIREWORKS_ = LargeLanguageModelsAPIInfo(
     #     company="Fireworks",
     #     generic_name="",
     #     api_reference="",
     #     description="""
     #     """,
+    #     has_tools=False,
     #     urls=[""]
     # )
     # TODO: additional fireworks llm models -> https://fireworks.ai/models
