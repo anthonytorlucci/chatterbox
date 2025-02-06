@@ -266,34 +266,6 @@ class LargeLanguageModelsEnum(LargeLanguageModelsEnumInterface):
         has_tools=True,
         urls=["https://fireworks.ai/models/fireworks/llama-v3p1-70b-instruct"]
     )
-    FIREWORKS_LLAMA_31_8B_INSTRUCT = LargeLanguageModelsAPIInfo(
-        company="Fireworks",
-        generic_name="fireworks llama 3.1 8B instruct",
-        api_reference="accounts/fireworks/models/llama-v3p1-8b-instruct",
-        description="""
-            The Meta Llama 3.1 collection of multilingual large language
-            models (LLMs) is a collection of pretrained and instruction tuned
-            generative models in 8B, 70B and 405B sizes. The Llama 3.1
-            instruction tuned text only models (8B, 70B, 405B) are optimized
-            for multilingual dialogue use cases and outperform many of the
-            available open source and closed chat models on common industry
-            benchmarks.""",
-        has_tools=True,
-        urls=["https://fireworks.ai/models/fireworks/llama-v3p1-8b-instruct"]
-    )
-    FIREWORKS_LLAMA_32_3B_INSTRUCT = LargeLanguageModelsAPIInfo(
-        company="Fireworks",
-        generic_name="fireworks llama 3.2 3B instruct",
-        api_reference="accounts/fireworks/models/llama-v3p2-3b-instruct",
-        description="""
-            Llama 3.2 3B instruct is a lightweight, multilingual model from
-            Meta. The model is designed for efficiency and offers substantial
-            latency and cost improvements compared to larger models. Example
-            use cases for the model include query and prompt rewriting and
-            writing assistance""",
-        has_tools=True,
-        urls=["https://fireworks.ai/models/fireworks/llama-v3p2-3b-instruct"]
-    )
     FIREWORKS_LLAMA_33_70B_INSTRUCT = LargeLanguageModelsAPIInfo(
         company="Fireworks",
         generic_name="fireworks llama 3.3 70B instruct",
@@ -318,19 +290,6 @@ class LargeLanguageModelsEnum(LargeLanguageModelsEnumInterface):
             enabled.""",
         has_tools=True,
         urls=["https://fireworks.ai/models/fireworks/mixtral-8x22b-instruct"]
-    )
-    FIREWORKS_ZEPHYR_7B_BETA = LargeLanguageModelsAPIInfo(
-        company="Fireworks",
-        generic_name="fireworks zephyr 7B beta",
-        api_reference="accounts/fireworks/models/zephyr-7b-beta",
-        description="""
-            Zephyr is a series of language models that are trained to act as
-            helpful assistants. Zephyr-7B-β is the second model in the series,
-            and is a fine-tuned version of mistralai/Mistral-7B-v0.1 that was
-            trained on on a mix of publicly available, synthetic datasets using
-            Direct Preference Optimization (DPO).""",
-        has_tools=True,
-        urls=["https://fireworks.ai/models/fireworks/zephyr-7b-beta"]
     )
     FIREWORKS_QWEN_QWQ_32B_PREVIEW = LargeLanguageModelsAPIInfo(
         company="Fireworks",
@@ -362,12 +321,36 @@ class LargeLanguageModelsEnum(LargeLanguageModelsEnumInterface):
         has_tools=False,  # ?
         urls=["https://fireworks.ai/models/fireworks/qwen2p5-coder-32b-instruct"]
     )
+    FIREWORKS_DEEPSEEK_R1 = LargeLanguageModelsAPIInfo(
+        company="Fireworks",
+        generic_name="fireworks deepseek r1",
+        api_reference="accounts/fireworks/models/deepseek-r1",
+        description="""
+        DeepSeek-R1 is a state-of-the-art large language model optimized with
+        reinforcement learning and cold-start data for exceptional reasoning,
+        math, and code performance.
+        """,
+        has_tools=False,
+        urls=["https://fireworks.ai/models/fireworks/deepseek-r1"]
+    )
+    FIREWORKS_ = LargeLanguageModelsAPIInfo(
+        company="Fireworks",
+        generic_name="fireworks deepseek v3",
+        api_reference="accounts/fireworks/models/deepseek-v3",
+        description="""
+        A a strong Mixture-of-Experts (MoE) language model with 671B total
+        parameters with 37B activated for each token from Deepseek.
+        """,
+        has_tools=False,
+        urls=["https://fireworks.ai/models/fireworks/deepseek-v3"]
+    )
     # FIREWORKS_ = LargeLanguageModelsAPIInfo(
     #     company="Fireworks",
     #     generic_name="",
     #     api_reference="",
     #     description="""
     #     """,
+    #     has_tools=False,
     #     urls=[""]
     # )
     # TODO: additional fireworks llm models -> https://fireworks.ai/models
@@ -504,146 +487,3 @@ def get_llm_model(model_config: LargeLanguageModelConfig):
             )
         case _:
             raise ValueError("Unknown model requested in get_llm_model().")
-
-
-    # match model_config.id:
-    #     # ollama models for running some nodes locally
-    #     case LargeLanguageModelsEnum.OLLAMA_LLAMA_32_3B:
-    #         return ChatOllama(
-    #             model=LargeLanguageModelsEnum.OLLAMA_LLAMA_32_3B.api_reference,
-    #             temperature=model_config.temperature,
-    #             num_predict=model_config.max_tokens,
-    #         )
-    #     case LargeLanguageModelsEnum.OLLAMA_MARCO_01_7B:
-    #         return ChatOllama(
-    #             model=LargeLanguageModelsEnum.OLLAMA_MARCO_01_7B.api_reference,
-    #             temperature=model_config.temperature,
-    #             num_predict=model_config.max_tokens,
-    #         )
-
-    #     # Anthropic models
-    #     case LargeLanguageModelsEnum.ANTHROPIC_CLAUDE_35_SONNET:
-    #         return ChatAnthropic(
-    #             model_name=LargeLanguageModelsEnum.ANTHROPIC_CLAUDE_35_SONNET.api_reference,
-    #             api_key=model_config.api_key,
-    #             temperature=model_config.temperature,
-    #             max_tokens_to_sample=model_config.max_tokens,
-    #             timeout=model_config.timeout,
-    #             max_retries=model_config.max_retries,
-    #             stop=None,
-    #         )
-    #     case LargeLanguageModelsEnum.ANTHROPIC_CLAUDE_35_HAIKU:
-    #         return ChatAnthropic(
-    #             model_name=LargeLanguageModelsEnum.ANTHROPIC_CLAUDE_35_HAIKU.api_reference,
-    #             api_key=model_config.api_key,
-    #             temperature=model_config.temperature,
-    #             max_tokens_to_sample=model_config.max_tokens,
-    #             timeout=model_config.timeout,
-    #             max_retries=model_config.max_retries,
-    #             stop=None,
-    #         )
-    #     case LargeLanguageModelsEnum.ANTHROPIC_CLAUDE_3_HAIKU:
-    #         return ChatAnthropic(
-    #             model_name=LargeLanguageModelsEnum.ANTHROPIC_CLAUDE_3_HAIKU.api_reference,
-    #             api_key=model_config.api_key,
-    #             temperature=model_config.temperature,
-    #             max_tokens_to_sample=model_config.max_tokens,
-    #             timeout=model_config.timeout,
-    #             max_retries=model_config.max_retries,
-    #             stop=None,
-    #         )
-    #     # OpenAI models
-    #     case LargeLanguageModelsEnum.OPENAI_O1_PREVIEW:
-    #         return ChatOpenAI(
-    #             model=LargeLanguageModelsEnum.OPENAI_O1_PREVIEW.api_reference,
-    #             api_key=model_config.api_key,
-    #             temperature=model_config.temperature,
-    #             max_tokens=model_config.max_tokens,
-    #             timeout=model_config.timeout,
-    #             max_retries=model_config.max_retries,
-    #             # other params...
-    #         )
-    #     case LargeLanguageModelsEnum.OPENAI_O1_MINI:
-    #         return ChatOpenAI(
-    #             model=LargeLanguageModelsEnum.OPENAI_O1_MINI.api_reference,
-    #             api_key=model_config.api_key,
-    #             temperature=model_config.temperature,
-    #             max_tokens=model_config.max_tokens,
-    #             timeout=model_config.timeout,
-    #             max_retries=model_config.max_retries,
-    #             # other params...
-    #         )
-    #     case LargeLanguageModelsEnum.OPENAI_GPT_4O:
-    #         return ChatOpenAI(
-    #             model=LargeLanguageModelsEnum.OPENAI_GPT_4O.api_reference,
-    #             api_key=model_config.api_key,
-    #             temperature=model_config.temperature,
-    #             max_tokens=model_config.max_tokens,
-    #             timeout=model_config.timeout,
-    #             max_retries=model_config.max_retries,
-    #             # other params...
-    #         )
-    #     case LargeLanguageModelsEnum.OPENAI_GPT_4O_MINI:
-    #         return ChatOpenAI(
-    #             model=LargeLanguageModelsEnum.OPENAI_GPT_4O_MINI.api_reference,
-    #             api_key=model_config.api_key,
-    #             temperature=model_config.temperature,
-    #             max_tokens=model_config.max_tokens,
-    #             timeout=model_config.timeout,
-    #             max_retries=model_config.max_retries,
-    #             # other params...
-    #         )
-    #     # Fireworks AI models
-    #     case LargeLanguageModelsEnum.FIREWORKS_LLAMA_31_405B_INSTRUCT:
-    #         return ChatFireworks(
-    #             model=LargeLanguageModelsEnum.FIREWORKS_LLAMA_31_405B_INSTRUCT.api_reference,
-    #             api_key=model_config.api_key,
-    #             temperature=model_config.temperature,
-    #             max_tokens=model_config.max_tokens,
-    #             timeout=model_config.timeout,
-    #             max_retries=model_config.max_retries,
-    #             # other params...
-    #         )
-    #     case LargeLanguageModelsEnum.FIREWORKS_LLAMA_31_70B_INSTRUCT:
-    #         return ChatFireworks(
-    #             model=LargeLanguageModelsEnum.FIREWORKS_LLAMA_31_70B_INSTRUCT.api_reference,
-    #             api_key=model_config.api_key,
-    #             temperature=model_config.temperature,
-    #             max_tokens=model_config.max_tokens,
-    #             timeout=model_config.timeout,
-    #             max_retries=model_config.max_retries,
-    #             # other params...
-    #         )
-    #     case LargeLanguageModelsEnum.FIREWORKS_LLAMA_31_8B_INSTRUCT:
-    #         return ChatFireworks(
-    #             model=LargeLanguageModelsEnum.FIREWORKS_LLAMA_31_8B_INSTRUCT.api_reference,
-    #             api_key=model_config.api_key,
-    #             temperature=model_config.temperature,
-    #             max_tokens=model_config.max_tokens,
-    #             timeout=model_config.timeout,
-    #             max_retries=model_config.max_retries,
-    #             # other params...
-    #         )
-    #     case LargeLanguageModelsEnum.FIREWORKS_LLAMA_32_3B_INSTRUCT:
-    #         return ChatFireworks(
-    #             model=LargeLanguageModelsEnum.FIREWORKS_LLAMA_32_3B_INSTRUCT.api_reference,
-    #             api_key=model_config.api_key,
-    #             temperature=model_config.temperature,
-    #             max_tokens=model_config.max_tokens,
-    #             timeout=model_config.timeout,
-    #             max_retries=model_config.max_retries,
-    #             # other params...
-    #         )
-    #     case LargeLanguageModelsEnum.FIREWORKS_QWEN_QWQ_32B_PREVIEW:
-    #         return ChatFireworks(
-    #             model=LargeLanguageModelsEnum.FIREWORKS_QWEN_QWQ_32B_PREVIEW.api_reference,
-    #             api_key=model_config.api_key,
-    #             temperature=model_config.temperature,
-    #             max_tokens=model_config.max_tokens,
-    #             timeout=model_config.timeout,
-    #             max_retries=model_config.max_retries,
-    #             # other params...
-    #         )
-
-    #     case _:
-    #         raise ValueError("Unknown model requested in get_llm_model().")
